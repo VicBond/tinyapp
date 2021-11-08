@@ -16,5 +16,8 @@
   "bugs": {
     "url": "https://github.com/VicBond/tinyapp/issues"
   },
-  "homepage": "https://github.com/VicBond/tinyapp#readme"
+  "homepage": "https://github.com/VicBond/tinyapp#readme",
+  "dependencies": {
+    "express": "^4.17.1"
+  }
 }
