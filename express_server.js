@@ -50,6 +50,7 @@ app.get("/urls.json", (req, res) => {
   res.json(urlDatabase);
 });
 
+// create a new shortURL and redirect to this URL
 app.post("/urls", (req, res) => {
   const newURL = req.body.longURL;
   const randomShortURL = generateRandomString();
@@ -65,6 +66,13 @@ app.post("/urls", (req, res) => {
 
 app.get("/hello", (req, res) => {
   res.send("<html><body>Hello <b>World</b></body></html>\n");
+});
+
+// delete an URL
+app.post("/urls/:shortURL/delete", (req, res) => {
+  const shortURL = req.params.shortURL;
+  delete urlDatabase[shortURL];
+  res.redirect(`/urls`);
 });
 
 app.listen(PORT, () => {
