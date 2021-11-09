@@ -57,7 +57,7 @@ app.post("/urls", (req, res) => {
   urlDatabase[randomShortURL] = newURL;
   
   // console.log(req.body);
-  res.send("Ok");
+  // res.send("Ok");
   
   res.redirect(`/urls/${randomShortURL}`);
 
