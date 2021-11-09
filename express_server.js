@@ -39,7 +39,6 @@ app.get("/urls/:shortURL", (req, res) => {
 app.get("/u/:shortURL", (req, res) => {
   const longURL = urlDatabase[req.params.shortURL];
   res.redirect(longURL);
-  
 });
 
 app.get("/", (req, res) => {
@@ -57,15 +56,22 @@ app.post("/urls", (req, res) => {
   
   urlDatabase[randomShortURL] = newURL;
   
-  // console.log(req.body);
-  // res.send("Ok");
-  
   res.redirect(`/urls/${randomShortURL}`);
 
 });
 
 app.get("/hello", (req, res) => {
   res.send("<html><body>Hello <b>World</b></body></html>\n");
+});
+
+// edit an URL
+app.post("/urls/:shortURL", (req, res) => {
+  const shortURL = req.params.shortURL;
+  const newURL = req.body.longURL;
+
+  urlDatabase[shortURL] = newURL;
+
+  res.redirect(`/urls/${shortURL}`);
 });
 
 // delete an URL
