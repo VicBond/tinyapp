@@ -8,6 +8,7 @@ app.use(bodyParser.urlencoded({extended: true}));
 app.use(cookieParser());
 app.set("view engine", "ejs");
 
+//================================================ HELP FUNCTIONS ================================================
 
 //Generating random string for shortURL (key) in urlDatabase
 const generateRandomString = () => {
@@ -20,6 +21,18 @@ const generateRandomString = () => {
   return result;
 };
 
+//checking for existing email in users object
+const existingUser = emailCheck => {
+  for (let userID in users) {
+    if (users[userID].email === emailCheck) {
+      return true;
+    }
+  }
+  return false;
+};
+
+//========================================= END OF HELP FUNCTIONS ================================================
+
 // demo-database to store all URLs as object database
 const urlDatabase = {
   "b2xVn2": "http://www.lighthouselabs.ca",
@@ -28,15 +41,15 @@ const urlDatabase = {
 
 //object used to store and access the users in the app
 const users = {
-  "userRandomID": {
-    id: "userRandomID",
-    email: "user@example.com",
-    password: "purple-monkey-dinosaur"
+  "111aaa": {
+    id: "111aaa",
+    email: "a@a.com",
+    password: "400002"
   },
-  "user2RandomID": {
-    id: "user2RandomID",
-    email: "user2@example.com",
-    password: "dishwasher-funk"
+  "222bbb": {
+    id: "222bbb",
+    email: "b@b.com",
+    password: "420000"
   }
 };
 
@@ -67,12 +80,20 @@ app.post("/register", (req, res) => {
   const userPassword = req.body.password;
   const randomUserID = generateRandomString();
   
+  if (!userEmail || !userPassword) {
+    res.status(400).send("Please enter a valid email address or password");
+  }
+
+  if (existingUser(userEmail)) {
+    res.status(400).send(`An account with email address ${userEmail} already exists. Please login using this email address or reset the password.`);
+  }
+
   users[randomUserID] = {
     id: randomUserID,
     email: userEmail,
     password: userPassword
   };
-  
+
   res.cookie('user_id', randomUserID);
   res.redirect(`/urls`);
 });
@@ -89,7 +110,8 @@ app.get("/register", (req, res) => {
   res.render("register" ,templateVars);
 });
 
-// through GET route shows /url_show wich contains data with user long and short     // URLs in EJS template (table structure)
+// through GET route shows /url_show wich contains data with user long and short
+// URLs in EJS template (table structure)
 app.get("/urls/:shortURL", (req, res) => {
   const templateVars = {
     user: users[req.cookies["user_id"]],
