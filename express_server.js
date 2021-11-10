@@ -10,7 +10,7 @@ app.set("view engine", "ejs");
 
 
 //Generating random string for shortURL (key) in urlDatabase
-function generateRandomString() {
+const generateRandomString = () => {
   let result = "";
   const charLength = 6;
   const charset = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
@@ -18,12 +18,26 @@ function generateRandomString() {
     result += charset.charAt(Math.floor(Math.random() * charset.length));
   }
   return result;
-}
+};
 
 // demo-database to store all URLs as object database
 const urlDatabase = {
   "b2xVn2": "http://www.lighthouselabs.ca",
   "9sm5xK": "http://www.google.com"
+};
+
+//object used to store and access the users in the app
+const users = {
+  "userRandomID": {
+    id: "userRandomID",
+    email: "user@example.com",
+    password: "purple-monkey-dinosaur"
+  },
+  "user2RandomID": {
+    id: "user2RandomID",
+    email: "user2@example.com",
+    password: "dishwasher-funk"
+  }
 };
 
 //shows urls_index at /urls with data of urls  and username cookies from object_database
@@ -47,10 +61,32 @@ app.post("/logout", (req, res) => {
   res.redirect(`/urls`);
 });
 
+//Registration Handler by POST route
+app.post("/register", (req, res) => {
+  const userEmail = req.body.email;
+  const userPassword = req.body.password;
+  const randomUserID = generateRandomString();
+  
+  users[randomUserID] = {
+    id: randomUserID,
+    email: userEmail,
+    password: userPassword
+  };
+  
+  res.cookie('user_id', randomUserID);
+  res.redirect(`/urls`);
+});
+
 //through GET route at /urls_new creates a new URL
 app.get("/urls/new", (req, res) => {
   let templateVars = { username: req.cookies["username"] };
   res.render("urls_new" ,templateVars);
+});
+
+//through GET route register a new user in registration form  (new template)
+app.get("/register", (req, res) => {
+  let templateVars = { username: req.cookies["username"] };
+  res.render("register" ,templateVars);
 });
 
 // through GET route shows /url_show wich contains data with username long and short     // URLs in EJS template (table structure)
