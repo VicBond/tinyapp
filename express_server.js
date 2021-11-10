@@ -62,6 +62,12 @@ app.get("/urls", (req, res) => {
   res.render("urls_index", templateVars);
 });
 
+//endpoint that responds with this new login form template through GET route
+app.get("/login", (req, res) => {
+  const templateVars = {user: users[req.cookies["user_id"]]};
+  res.render("login", templateVars);
+});
+
 //logging through POST route, saves in cookies and redirects to /urls
 app.post("/login", (req, res) => {
   res.cookie('user_id', req.body.user_id);
@@ -106,7 +112,8 @@ app.get("/urls/new", (req, res) => {
 
 //through GET route register a new user in registration form  (new template)
 app.get("/register", (req, res) => {
-  let templateVars = {user: users[req.cookies["user_id"]]};
+  let templateVars = {
+    user: users[req.cookies["user_id"]]};
   res.render("register" ,templateVars);
 });
 
