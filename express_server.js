@@ -40,24 +40,24 @@ const users = {
   }
 };
 
-//shows urls_index at /urls with data of urls  and username cookies from object_database
+//shows urls_index at /urls with data of urls and user cookies from object_database
 app.get("/urls", (req, res) => {
   const templateVars = {
     urls: urlDatabase,
-    username: req.cookies["username"],
+    user: users[req.cookies["user_id"]],
   };
   res.render("urls_index", templateVars);
 });
 
 //logging through POST route, saves in cookies and redirects to /urls
 app.post("/login", (req, res) => {
-  res.cookie('username', req.body.username);
+  res.cookie('user_id', req.body.user_id);
   res.redirect(`/urls`);
 });
 
 //logging out through POST route and removes cookies of user
 app.post("/logout", (req, res) => {
-  res.clearCookie('username');
+  res.clearCookie('user_id');
   res.redirect(`/urls`);
 });
 
@@ -79,20 +79,20 @@ app.post("/register", (req, res) => {
 
 //through GET route at /urls_new creates a new URL
 app.get("/urls/new", (req, res) => {
-  let templateVars = { username: req.cookies["username"] };
+  let templateVars = { user: users[req.cookies["user_id"]] };
   res.render("urls_new" ,templateVars);
 });
 
 //through GET route register a new user in registration form  (new template)
 app.get("/register", (req, res) => {
-  let templateVars = { username: req.cookies["username"] };
+  let templateVars = {user: users[req.cookies["user_id"]]};
   res.render("register" ,templateVars);
 });
 
-// through GET route shows /url_show wich contains data with username long and short     // URLs in EJS template (table structure)
+// through GET route shows /url_show wich contains data with user long and short     // URLs in EJS template (table structure)
 app.get("/urls/:shortURL", (req, res) => {
   const templateVars = {
-    username: req.cookies["username"],
+    user: users[req.cookies["user_id"]],
     shortURL: req.params.shortURL,
     longURL: urlDatabase[req.params.shortURL],
   };
