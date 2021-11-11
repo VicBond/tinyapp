@@ -8,6 +8,31 @@ app.use(bodyParser.urlencoded({extended: true}));
 app.use(cookieParser());
 app.set("view engine", "ejs");
 
+/* demo-database to store all URLs as an object database. This shortURL as the key, but longURL and userID also keys itself.*/
+const urlDatabase = {
+  "blight": {
+    longURL: "http://www.lighthouselabs.ca",
+    userID: "111aaa",
+  },
+  "4goog2": {
+    longURL: "http://www.google.com",
+    userID: "222bbb",
+  },
+};
+
+//object used to store and access the users in the app
+const users = {
+  "111aaa": {
+    id: "111aaa",
+    email: "a@a.com",
+    password: "424242"
+  },
+  "222bbb": {
+    id: "222bbb",
+    email: "b@b.com",
+    password: "420000"
+  }
+};
 /*================================================ HELP FUNCTIONS ================================================*/
 
 //Generating random string for shortURL (key) in urlDatabase
@@ -54,31 +79,6 @@ const userURL = userID => {
 
 /*========================================= END OF HELP FUNCTIONS ================================================*/
 
-/* demo-database to store all URLs as an object database. This shortURL as the key, but longURL and userID also keys itself.*/
-const urlDatabase = {
-  "blight": {
-    longURL: "http://www.lighthouselabs.ca",
-    userID: "111aaa",
-  },
-  "4goog2": {
-    longURL: "http://www.google.com",
-    userID: "222bbb",
-  },
-};
-
-//object used to store and access the users in the app
-const users = {
-  "111aaa": {
-    id: "111aaa",
-    email: "a@a.com",
-    password: "424242"
-  },
-  "222bbb": {
-    id: "222bbb",
-    email: "b@b.com",
-    password: "420000"
-  }
-};
 
 //shows urls_index at /urls with data of urls and user cookies from object_database
 app.get("/urls", (req, res) => {
@@ -86,7 +86,12 @@ app.get("/urls", (req, res) => {
     urls: userURL(req.cookies["user_id"]),
     user: users[req.cookies["user_id"]],
   };
-  res.render("urls_index", templateVars);
+  if (!templateVars.user) {
+    res.render("urls_index", templateVars);
+    // res.status(403).send("Please login/register to be able to access EDIT or SAVE features");
+  } else {
+    res.render("urls_index", templateVars);
+  }
 });
 
 //endpoint that responds with this new login form template through GET route
@@ -144,7 +149,7 @@ app.post("/register", (req, res) => {
 /*through GET route at /urls_new creates a new URL - BUT if user hasn't an userID redirected to login page*/
 app.get("/urls/new", (req, res) => {
   let templateVars = { user: users[req.cookies["user_id"]] };
-  req.cookies["user_id"] ? res.render("urls_new" ,templateVars) : res.redirect("/login");
+  req.cookies["user_id"] ? res.render("urls_new" ,templateVars) : res.redirect("/urls");
 });
 
 //through GET route register a new user in registration form  (new template)
@@ -171,15 +176,6 @@ app.get("/u/:shortURL", (req, res) => {
   res.redirect(longURL);
 });
 
-//at root prints Hello!
-app.get("/", (req, res) => {
-  res.send("Hello!");
-});
-
-//GET route shows an JSON object og urlDatabase
-app.get("/urls.json", (req, res) => {
-  res.json(urlDatabase);
-});
 
 // create a new shortURL and redirect to this URL
 app.post("/urls", (req, res) => {
@@ -192,26 +188,43 @@ app.post("/urls", (req, res) => {
   res.redirect(`/urls/${randomShortURL}`);
 });
 
-//Prints Hello World at /hello
-app.get("/hello", (req, res) => {
-  res.send("<html><body>Hello <b>World</b></body></html>\n");
-});
 
 // edit an existing URL through POST route
 app.post("/urls/:shortURL", (req, res) => {
   const shortURL = req.params.shortURL;
   const newURL = req.body.longURL;
-
-  urlDatabase[shortURL] = newURL;
-
-  res.redirect(`/urls/${shortURL}`);
+  if (req.cookies["user_id"] !== urlDatabase[shortURL].userID) {
+    res.status(403).send("Please login/register to be able to access EDIT or SAVE features");
+  } else {
+    urlDatabase[shortURL].longURL = newURL;
+    res.redirect(`/urls/${shortURL}`);
+  }
 });
 
 // deleting an existing URL through POST route
 app.post("/urls/:shortURL/delete", (req, res) => {
   const shortURL = req.params.shortURL;
-  delete urlDatabase[shortURL];
-  res.redirect(`/urls`);
+  if (req.cookies["user_id"] !== urlDatabase[shortURL].userID) {
+    res.status(403).send("Please login/register to be able to access EDIT or SAVE features");
+  } else {
+    delete urlDatabase[shortURL];
+    res.redirect(`/urls`);
+  }
+});
+
+//at root prints Hello!
+app.get("/", (req, res) => {
+  res.send("Hello!");
+});
+
+//GET route shows an JSON object og urlDatabase
+app.get("/urls.json", (req, res) => {
+  res.json(urlDatabase);
+});
+
+//Prints Hello World at /hello
+app.get("/hello", (req, res) => {
+  res.send("<html><body>Hello <b>World</b></body></html>\n");
 });
 
 //listens on port defined in variable PORT
