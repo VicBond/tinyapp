@@ -12,23 +12,33 @@
 <body>
   
     <%- include('partials/_header') %>
-  
-  <main style="margin: 1em;">
-    <h3>My URLs</h3>
-    <table class="table">
-      <thead>
-        <tr>
-          <th scope="col">Short URL</th>
-          <th scope="col">Long URL</th>
-          <th scope="col">Edit</th>
-          <th scope="col">Delete</th>
-        </tr>
-      </thead>
-      <tbody>
+    
+    <main style="margin: 2em;">
+    <% if (user === undefined)  {%> 
+      <div>
+        <p class="aligncenter"></p>
+        <img src="https://sayingimages.com/wp-content/uploads/2021/04/calm-down-okay-okay-meme.jpg" alt="Relax" class="center">
+      </p>
+      <p>Login or register to be able continue working on links in TinyApp.</p> 
+      <a href="/login" class="btn btn-warning">Login</a>
+      <a href="/register" class="btn btn-warning">Register</a>
+    </div>
+    <% } else { %> 
+        <h3>My URLs</h3>
+        <table class="table">
+          <thead>
+            <tr>
+              <th scope="col">Short URL</th>
+              <th scope="col">Long URL</th>
+              <th scope="col">Edit</th>
+              <th scope="col">Delete</th>
+            </tr>
+          </thead>
+          <tbody>
         <% for(let url in urls) { %>
           <tr>
             <td><%= url %></td>
-            <td><%= urls[url] %></td>
+            <td><%= urls[url].longURL %></td>
             <td>
               <form method="GET" action="/urls/<%= url %>">
                 <button type="submit" class="btn btn-warning"> Edit </button>
@@ -40,6 +50,7 @@
               </form>
             </td>
           </tr>
+        <% } %>
         <% } %>
       </tbody>
     </table>

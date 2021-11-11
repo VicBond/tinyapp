@@ -8,7 +8,7 @@ app.use(bodyParser.urlencoded({extended: true}));
 app.use(cookieParser());
 app.set("view engine", "ejs");
 
-//================================================ HELP FUNCTIONS ================================================
+/*================================================ HELP FUNCTIONS ================================================*/
 
 //Generating random string for shortURL (key) in urlDatabase
 const generateRandomString = () => {
@@ -41,13 +41,29 @@ const passwordMatch = passwordCheck => {
   return false;
 };
 
-//========================================= END OF HELP FUNCTIONS ================================================
+//shows only urls that userID created or updated
+const userURL = userID => {
+  const urls = {};
+  for (let shortURL in urlDatabase)  {
+    if (urlDatabase[shortURL].userID === userID) {
+      urls[shortURL] = urlDatabase[shortURL];
+    }
+  }
+  return urls;
+};
 
-// demo-database to store all URLs as object database
+/*========================================= END OF HELP FUNCTIONS ================================================*/
+
+/* demo-database to store all URLs as an object database. This shortURL as the key, but longURL and userID also keys itself.*/
 const urlDatabase = {
-  "blight": "http://www.lighthouselabs.ca",
-  "4goog2": "http://www.google.com",
-  "4mail2": "http://www.gmail.com"
+  "blight": {
+    longURL: "http://www.lighthouselabs.ca",
+    userID: "111aaa",
+  },
+  "4goog2": {
+    longURL: "http://www.google.com",
+    userID: "222bbb",
+  },
 };
 
 //object used to store and access the users in the app
@@ -67,7 +83,7 @@ const users = {
 //shows urls_index at /urls with data of urls and user cookies from object_database
 app.get("/urls", (req, res) => {
   const templateVars = {
-    urls: urlDatabase,
+    urls: userURL(req.cookies["user_id"]),
     user: users[req.cookies["user_id"]],
   };
   res.render("urls_index", templateVars);
@@ -125,10 +141,10 @@ app.post("/register", (req, res) => {
   res.redirect(`/urls`);
 });
 
-//through GET route at /urls_new creates a new URL
+/*through GET route at /urls_new creates a new URL - BUT if user hasn't an userID redirected to login page*/
 app.get("/urls/new", (req, res) => {
   let templateVars = { user: users[req.cookies["user_id"]] };
-  res.render("urls_new" ,templateVars);
+  req.cookies["user_id"] ? res.render("urls_new" ,templateVars) : res.redirect("/login");
 });
 
 //through GET route register a new user in registration form  (new template)
@@ -137,20 +153,21 @@ app.get("/register", (req, res) => {
   res.render("register" ,templateVars);
 });
 
-// through GET route shows /url_show wich contains data with user long and short
-// URLs in EJS template (table structure)
+/*through GET route shows /url_show wich contains data with user's longURL and userID values with a shortURL as a key
+ in EJS template (table structure)*/
 app.get("/urls/:shortURL", (req, res) => {
   const templateVars = {
     user: users[req.cookies["user_id"]],
     shortURL: req.params.shortURL,
-    longURL: urlDatabase[req.params.shortURL],
+    longURL: urlDatabase[req.params.shortURL].longURL,
+    userURLs: urlDatabase[req.params.shortURL].userID
   };
   res.render("urls_show", templateVars);
 });
 
 //request through GET route redirects to actual URL (longURL)
 app.get("/u/:shortURL", (req, res) => {
-  const longURL = urlDatabase[req.params.shortURL];
+  const longURL = urlDatabase[req.params.shortURL].longURL;
   res.redirect(longURL);
 });
 
@@ -168,11 +185,11 @@ app.get("/urls.json", (req, res) => {
 app.post("/urls", (req, res) => {
   const newURL = req.body.longURL;
   const randomShortURL = generateRandomString();
-  
-  urlDatabase[randomShortURL] = newURL;
-  
+  urlDatabase[randomShortURL] = {
+    longURL: newURL,
+    userID: req.cookies["user_id"],
+  };
   res.redirect(`/urls/${randomShortURL}`);
-
 });
 
 //Prints Hello World at /hello
