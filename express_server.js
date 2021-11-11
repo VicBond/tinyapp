@@ -25,6 +25,16 @@ const generateRandomString = () => {
 const existingUser = emailCheck => {
   for (let userID in users) {
     if (users[userID].email === emailCheck) {
+      return users[userID].id;
+    }
+  }
+  return false;
+};
+
+//checking if password is valid
+const passwordMatch = passwordCheck => {
+  for (let userID in users) {
+    if (users[userID].password === passwordCheck) {
       return true;
     }
   }
@@ -35,8 +45,9 @@ const existingUser = emailCheck => {
 
 // demo-database to store all URLs as object database
 const urlDatabase = {
-  "b2xVn2": "http://www.lighthouselabs.ca",
-  "9sm5xK": "http://www.google.com"
+  "blight": "http://www.lighthouselabs.ca",
+  "4goog2": "http://www.google.com",
+  "4mail2": "http://www.gmail.com"
 };
 
 //object used to store and access the users in the app
@@ -44,7 +55,7 @@ const users = {
   "111aaa": {
     id: "111aaa",
     email: "a@a.com",
-    password: "400002"
+    password: "424242"
   },
   "222bbb": {
     id: "222bbb",
@@ -70,8 +81,18 @@ app.get("/login", (req, res) => {
 
 //logging through POST route, saves in cookies and redirects to /urls
 app.post("/login", (req, res) => {
-  res.cookie('user_id', req.body.user_id);
-  res.redirect(`/urls`);
+  const userEmail = req.body.email;
+  const userPassword = req.body.password;
+  const userID = existingUser(userEmail);
+
+  if (!existingUser(userEmail)) {
+    res.status(403).send(`An account with ${userEmail} address not exists. Please login with valid email address.`);
+  } else if (!passwordMatch(userPassword)) {
+    res.status(403).send("Password not correct! Please re-enter a password.");
+  } else {
+    res.cookie('user_id', userID);
+    res.redirect(`/urls`);
+  }
 });
 
 //logging out through POST route and removes cookies of user
@@ -112,8 +133,7 @@ app.get("/urls/new", (req, res) => {
 
 //through GET route register a new user in registration form  (new template)
 app.get("/register", (req, res) => {
-  let templateVars = {
-    user: users[req.cookies["user_id"]]};
+  let templateVars = { user: users[req.cookies["user_id"]]};
   res.render("register" ,templateVars);
 });
 
