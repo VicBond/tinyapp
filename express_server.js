@@ -3,6 +3,8 @@ const app = express();
 const PORT = 8080; // default port 8080
 const bodyParser = require("body-parser");
 const cookieParser = require('cookie-parser');
+const bcrypt = require('bcryptjs');
+const salt = bcrypt.genSaltSync(10);
 
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(cookieParser());
@@ -56,16 +58,6 @@ const existingUser = emailCheck => {
   return false;
 };
 
-//checking if password is valid
-const passwordMatch = passwordCheck => {
-  for (let userID in users) {
-    if (users[userID].password === passwordCheck) {
-      return true;
-    }
-  }
-  return false;
-};
-
 //shows only urls that userID created or updated
 const userURL = userID => {
   const urls = {};
@@ -108,8 +100,8 @@ app.post("/login", (req, res) => {
 
   if (!existingUser(userEmail)) {
     res.status(403).send(`An account with ${userEmail} address not exists. Please login with valid email address.`);
-  } else if (!passwordMatch(userPassword)) {
-    res.status(403).send("Password not correct! Please re-enter a password.");
+  } else if (!bcrypt.compareSync(userPassword, users[userID].password)) {
+    res.status(403).send("Password doesn't match in our system! Please re-enter a password.");
   } else {
     res.cookie('user_id', userID);
     res.redirect(`/urls`);
@@ -127,8 +119,9 @@ app.post("/register", (req, res) => {
   const userEmail = req.body.email;
   const userPassword = req.body.password;
   const randomUserID = generateRandomString();
+  const hashedPassword = bcrypt.hashSync(userPassword, salt);
   
-  if (!userEmail || !userPassword) {
+  if (!userEmail || !hashedPassword) {
     res.status(400).send("Please enter a valid email address or password");
   }
 
@@ -139,7 +132,7 @@ app.post("/register", (req, res) => {
   users[randomUserID] = {
     id: randomUserID,
     email: userEmail,
-    password: userPassword
+    password: hashedPassword
   };
 
   res.cookie('user_id', randomUserID);
