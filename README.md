@@ -4,10 +4,9 @@ TinyApp is a full stack web application built with Node and Express that allows 
 
 ## Final Product
 
-!["https://github.com/VicBond/tinyapp/blob/master/docs/urls-page.png"](#)
-
-!["https://github.com/VicBond/tinyapp/blob/master/docs/login-page.png"](#)
-!["https://github.com/VicBond/tinyapp/blob/master/docs/new-url-page.png"](#)
+!["Screenshot of URLs page"](https://github.com/VicBond/tinyapp/blob/master/docs/urls-page.png)
+!["Screenshot of Login page"](https://github.com/VicBond/tinyapp/blob/master/docs/login-page.png)
+!["Screenshot of new URL creation page"](https://github.com/VicBond/tinyapp/blob/master/docs/new-url-page.png)
 
 ## Dependencies
 
