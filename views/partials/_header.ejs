@@ -5,28 +5,23 @@
       <span class="navbar-toggler-icon"></span>
     </button>
     <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
-       <div class="navbar-nav">
-        <a class="nav-item nav-link" href="/urls">My URLs</a>
-        <a class="nav-item nav-link" href="/urls/new">Create New URL</a>
+      <div class="navbar-nav">
+        <a class="nav-item nav-link" href="/urls" ">My URLs</a>
+        <a class="nav-item nav-link" href="/urls/new" ">Create New URL</a>
       </div>
     </div>
-    <div>
-      <% if (user) {%>
-        <form class="form-inline-center" action="/logout" method="POST">
-          <span style="font-size:16px; color:white" >Logged in as: <%= user.email %>!</span>
-          <button  type="submit" class="btn btn-primary">Sign Out</button>
-        </form>
-      <% } else { %>
-        <a href="/login" class="btn btn-primary">Login</a>
-        <a href="/register" class="btn btn-primary">Register</a>
-
-        <!-- <form class="form-inline" action="/register" method="GET">
-          <button  type="submit" class="btn btn-primary">Register</button>
-        </form>
-        <form class="form-inline" action="/login" method="GET">
-          <button  type="submit" class="btn btn-primary">Login</button>
-        </form> -->
-      <% } %>
-    </div>
+    <% if(user) { %>
+      <form class="form-inline" action="/logout %>" method="POST">
+        <span style="color:white";> Logged in as: <%= user.email %></span>
+        <button type="submit" class="btn btn-primary" style="margin-left: 1em">Logout</button>
+      </form>
+   <% } else { %>
+    <form class="form-inline" action="/login" method="GET">
+      <button type="submit" class="btn btn-primary" style="margin-right: 1em;">Login</button>
+    </form>
+    <form class="form-inline" action="/register" method="GET">
+      <button type="submit" class="btn btn-primary">Register</button>
+    </form>
+    <% } %>
   </nav>
 </header>
