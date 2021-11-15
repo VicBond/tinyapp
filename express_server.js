@@ -56,7 +56,7 @@ app.get("/login", (req, res) => {
   res.render("login", templateVars);
 });
 
-//LOGIN POST
+//LOGIN PAGE POST
 app.post("/login", (req, res) => {
   const userEmail = req.body.email;
   const userPassword = req.body.password;
@@ -68,13 +68,13 @@ app.post("/login", (req, res) => {
   res.redirect(`/urls`);
 });
 
-//LOGOUT POST
+//LOGOUT BUTTON POST
 app.post("/logout", (req, res) => {
   res.clearCookie("user_id");
   res.redirect(`/urls`);
 });
 
-//REGISTER POST
+//REGISTER PAGE POST
 app.post("/register", (req, res) => {
   const userEmail = req.body.email;
   const userPassword = req.body.password;
