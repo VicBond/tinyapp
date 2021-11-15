@@ -6,45 +6,24 @@
   <title>URL - TinyApp</title>
 </head>
 <body>
-  
-    <%- include('partials/_header') %>
-  
+  <%- include('partials/_header') %>
   <div class="card text-center">
       <div class="card-header"></div>
       <div class="card-body">
-       <h5 class="card-title">TinyURL for: <%= longURL %></h5>
+        <h5 class="card-title">TinyURL for: <%= longURL %></h5>
         <p class="card-text">Short URL: <a href="/u/<%= shortURL %>"><%= shortURL %></a></p>
-      </div>
-  </div>
-
-<!-- Update an URL -->
-<% if (user === undefined || user.id !== userURLs) {%> 
-  <div class="card text-center">
-    <div class="card-header">
-      <div class="card-body">
-        <h1 class="card-title">Please Login or Register to be able save/update this link.</h1>
-        <p>Join the FUN !</p> 
-          <a href="/login" class="btn btn-warning">Login</a>
-          <a href="/register" class="btn btn-warning">Register</a>
-      </div>
-    </div>
-  </div>
-<% } else { %> 
-  <div class="card text-center">
-    <div class="card-header">
-      <div class="card-body">
         <h1 class="card-title">Update</h1>
-        <form class="form-inline justify-content-center" action="/urls/<%= shortURL %>" method="POST">
-          <div class="form-group mb-2">
-            <label for="longURL">Enter a new URL :</label>
-            <input class="form-control" type="text" name="longURL" placeholder="http://www.theNew.url" style="width: 300px; margin: 1em; ">
-            <button type="submit" class="btn btn-primary">Update</button>
-          </div>
-        </div>
-        </form>
-    </div>
-</div>
-<% }; %> 
+                <form class="form-inline justify-content-center" action="/urls/<%= shortURL %>" method="POST">
+                  <div class="form-group mb-2">
+                    <label for="longURL">Enter a new URL :</label>
+                    <input class="form-control" type="text" name="longURL" placeholder="http://www.theNew.url" style="width: 300px; margin: 1em; ">
+                    <button type="submit" class="btn btn-primary">Update</button>
+                  </div>
+                </div>
+                </form>
+      </div>
+    <div class="card-footer text-muted"></div>
+  </div>
   <!-- Bootstrap JS -->
   <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
